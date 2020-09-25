@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Задачи</title>
+    <style type="text/css">
+        table {
+            background: white; /* Цвет фона таблицы */
+            color: black; /* Цвет текста */
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        td, th {
+            padding: 5px; /* Поля вокруг текста */
+            width: 200px;
+        }
+    </style>
+</head>
+@Scripts.Render("~/Scripts/jquery-3.3.1.js")
+@Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.min.js")
+<body>
+    <div id="testid">
+        <div style="position:fixed; right:0;">
+            @*InsertionMode = InsertionMode.Replace*@
+            @using (Ajax.BeginForm("AjaxFind", "Home", new AjaxOptions { InsertionMode = InsertionMode.Replace }))
+            {
+                <select name="sel">
+                    <option value="1">Все</option>
+                    <option value="2">Не выполненные</option>
+                    <option value="3">Выполненные</option>
+                </select>
+                <input type="text" id="inp" name="data" />
+                <input type="submit" value="Поиск" />
+            }
+            <p id="container"></p>
+        </div>
+        <!--<p style="position:fixed; right:0;">jhfjklghhgjk</p>-->
+        @*<p><a href="/Home/Insert">Добавить задачу</a></p>*@
+        
+    </div>
+
+    @*@using (Ajax.BeginForm("Index", "Users", new AjaxOptions { InsertionMode = InsertionMode.Replace }))
+    {*@
+    <div id="usersid">
+        <p><a href="/Photos/Insert">Добавить фото</a></p>
+        <p><a href="/Photos/Search">Поиск по фото</a></p>
+        <table>
+
+            @if (ViewBag.userList != null)
+            {
+                <tr>
+                    <td><p>Логин </p></td>
+                    <td><p>ФИО </p></td>
+                    <td><p>Возраст</p></td>
+                    <td><p>Является ли администратором</p></td>
+                    <td></td>
+                </tr>
+                foreach (var user in ViewBag.userList)
+                {
+
+                    <tr id="tableRecord">
+                        <td><p>@user.Email </p></td>
+                        <td><p>@user.FIO </p></td>
+                        <td><p>@user.Age </p></td>
+                        <td><p>@user.IsAdmin </p></td>
+                        <td><p><a href="/Home/Change?id=@user.Id">Изменить</a></p></td>
+                        <td>
+                            <p>
+
+
+                                @Ajax.ActionLink("Удалить", "AjaxDelete", "Home", new { data = @user.Id }, new AjaxOptions { UpdateTargetId = "usersid" })
+                            <p id="container"></p>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+
+</body>
+</html>

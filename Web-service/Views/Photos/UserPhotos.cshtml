@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "UserPhotos";
+}
+
+<h3>Фото @ViewBag.User.FIO:</h3>
+
+<div id="testid">
+    <table>
+        @foreach (var item in ViewBag.Photos)
+        {
+            <tr>
+
+                <td>
+                    @Html.Raw("<img style='width:100px; height:100px;' src=\"data:image/jpeg;base64,"
+                                        + Convert.ToBase64String(item.ImageData) + "\" />")
+                </td>
+                <td>
+                    <p>
+                        @Ajax.ActionLink("Удалить", "AjaxDelete", "Photos", new { data = @item.Id }, new AjaxOptions { UpdateTargetId = "testid" })
+                    <p id="container"></p>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

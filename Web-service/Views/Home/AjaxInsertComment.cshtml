@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewBag.Title = "AjaxInsertComment";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Редактирование</title>
+</head>
+<body>
+    <div>
+        <!--<form method="post" action="">
+            <table>
+                <tr>
+                    <td><p>Введите описание :</p></td>
+                    <td>
+                        <input type="text" name="Description" />
+                    </td>
+                </tr>
+                <tr><td><input type="submit" value="Добавить" /> </td><td><input type="submit" value="Отмена" hreh="/Home" /></td></tr>
+            </table>
+        </form>-->
+        <br />
+        @using (Ajax.BeginForm("AjaxInsertComments", "Home", new AjaxOptions { UpdateTargetId = "container" }))
+        {
+            <input type="text" id="inp" name="data" />
+            <input type="submit" value="Добавить" />
+        }
+        <p id="container"></p>
+    </div>
+</body>
+</html>
