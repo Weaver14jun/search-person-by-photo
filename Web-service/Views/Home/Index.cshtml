@@ -18,7 +18,8 @@
 
         td, th {
             padding: 5px; /* Поля вокруг текста */
-            width: 200px;
+            width: 150px;
+            height: auto;
         }
     </style>
 </head>
@@ -64,20 +65,21 @@
                 foreach (var user in ViewBag.userList)
                 {
 
-                    <tr id="tableRecord">
-                        <td><p>@user.Email </p></td>
-                        <td><p>@user.FIO </p></td>
-                        <td><p>@user.Age </p></td>
-                        <td><p>@user.IsAdmin </p></td>
-                        <td><p><a href="/Home/Change?id=@user.Id">Изменить</a></p></td>
-                        <td>
-                            <p>
+                <tr id="tableRecord">
+                    <td><p>@user.Email </p></td>
+                    <td><p>@user.FIO </p></td>
+                    <td><p>@user.Age </p></td>
+                    <td><p>@user.IsAdmin </p></td>
+                    <td><p><a href="/Users/Change?id=@user.Id">Изменить</a></p></td>
+                    <td><p><a href="/Photos/UserPhotos?id=@user.Id">Управлять фото</a></p></td>
+                    <td>
+                        <p>
 
 
-                                @Ajax.ActionLink("Удалить", "AjaxDelete", "Home", new { data = @user.Id }, new AjaxOptions { UpdateTargetId = "usersid" })
-                            <p id="container"></p>
-                        </td>
-                    </tr>
+                            @Ajax.ActionLink("Удалить", "AjaxDelete", "Home", new { data = @user.Id }, new AjaxOptions { UpdateTargetId = "usersid" })
+                        <p id="container"></p>
+                    </td>
+                </tr>
                 }
             }
         </table>

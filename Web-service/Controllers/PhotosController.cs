@@ -11,19 +11,52 @@ namespace Web_service.Controllers
 {
     public class PhotosController : Controller
     {
-        public ActionResult UserPhotos()
+        //public ActionResult UserPhotos()
+        //{
+        //    User user = null;
+        //    using (UserContext db = new UserContext())
+        //    {
+        //        user = db.Users.First(u => u.Email == User.Identity.Name);
+        //    }
+        //    List<Photos> photos = new List<Photos>();
+        //    using (PhotosContext db = new PhotosContext())
+        //    {
+        //        foreach(var item in db.Photos.ToList())
+        //        {
+        //            if(item.IdUser == user.Id)
+        //            {
+        //                photos.Add(item);
+        //            }
+        //        }
+        //    }
+        //    ViewBag.Photos = photos;
+        //    ViewBag.User = user;
+        //    return View();
+        //}
+
+        public ActionResult UserPhotos(int? id)
         {
             User user = null;
-            using (UserContext db = new UserContext())
+            if (id == null)
             {
-                user = db.Users.First(u => u.Email == User.Identity.Name);
+                using (UserContext db = new UserContext())
+                {
+                    user = db.Users.First(u => u.Email == User.Identity.Name);
+                }
+            }
+            else
+            {
+                using (UserContext db = new UserContext())
+                {
+                    user = db.Users.First(u => u.Id == id);
+                }
             }
             List<Photos> photos = new List<Photos>();
             using (PhotosContext db = new PhotosContext())
             {
-                foreach(var item in db.Photos.ToList())
+                foreach (var item in db.Photos.ToList())
                 {
-                    if(item.IdUser == user.Id)
+                    if (item.IdUser == user.Id)
                     {
                         photos.Add(item);
                     }

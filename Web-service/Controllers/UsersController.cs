@@ -98,41 +98,6 @@ namespace Web_service.Controllers
             }
             if (Request.IsAjaxRequest())
             {
-
-                //List<Tasks> tasks = new List<Tasks>();
-                //using (UserContext db = new UserContext())
-                //{
-                //    var query = user.;//db.Users.Where(u => u.Id == user.Id).ToList();
-                //    foreach (var item in query)
-                //    {
-                //        if (item.Name.Length > 30)
-                //        {
-                //            string str = "";
-                //            string str1 = item.Name;
-                //            while (str1.Length > 30)
-                //            {
-                //                str += str1.Substring(0, 30) + " ";
-                //                str1 = str1.Remove(0, 30);
-                //            }
-                //            str += str1;
-                //            item.Name = str;
-                //        }
-                //        if (item.Description.Length > 30)
-                //        {
-                //            string str = "";
-                //            string str1 = item.Description;
-                //            while (str1.Length > 30)
-                //            {
-                //                str += str1.Substring(0, 30) + " ";
-                //                str1 = str1.Remove(0, 30);
-                //            }
-                //            str += str1;
-                //            item.Description = str;
-                //        }
-                //        tasks.Add(item as Tasks);
-                //    }
-                //}
-
                 List<User> userList = new List<User>();
                 using (UserContext db = new UserContext())
                 {
@@ -162,6 +127,45 @@ namespace Web_service.Controllers
                 return PartialView("userList");
             }
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public ActionResult Change(int id)
+        {
+            User user = null;
+            using (UserContext db = new UserContext())
+            {
+                user = db.Users.First(u => u.Id == id);
+            }
+
+            ViewBag.UserData = user;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Change(int id, RegisterModel registerModel)
+        {
+            User user = null;
+            using (UserContext db = new UserContext())
+            {
+                user = db.Users.First(u => u.Id == id);
+                user.FIO = registerModel.FIO;
+                user.Age = registerModel.Age;
+                user.Email = registerModel.Login;
+                user.Password = registerModel.Password;
+                db.SaveChanges();
+
+                user = db.Users.First(u => u.Email == User.Identity.Name);
+            }
+
+            if (user.Id != id)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
         }
     }
 }

@@ -146,6 +146,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\InitializeDB.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -196,11 +197,12 @@
     <Content Include="Views\Photos\Insert.cshtml" />
     <Content Include="Views\Photos\UserPhotos.cshtml" />
     <Content Include="Views\Photos\Search.cshtml" />
+    <Content Include="Views\Users\Change.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Views\Tasks\" />
-    <Folder Include="Views\Users\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
