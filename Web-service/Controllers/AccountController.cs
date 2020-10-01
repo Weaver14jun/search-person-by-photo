@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -17,7 +19,7 @@ namespace Web_service.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginModel model)
+        public async Task<ActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
@@ -25,7 +27,7 @@ namespace Web_service.Controllers
                 User user = null;
                 using (UserContext db = new UserContext())
                 {
-                    user = db.Users.FirstOrDefault(u => u.Email == model.Login && u.Password == model.Password);
+                    user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Login && u.Password == model.Password);
 
                 }
                 if (user != null)
@@ -49,14 +51,14 @@ namespace Web_service.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterModel model)
+        public async Task<ActionResult> Register(RegisterModel model)
         {
             if (ModelState.IsValid)
             {
                 User user = null;
                 using (UserContext db = new UserContext())
                 {
-                    user = db.Users.FirstOrDefault(u => u.Email == model.Login);
+                    user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Login);
                 }
                 if (user == null)
                 {
@@ -64,9 +66,9 @@ namespace Web_service.Controllers
                     using (UserContext db = new UserContext())
                     {
                         db.Users.Add(new User { Email = model.Login, FIO = model.FIO, Password = model.Password, Age = model.Age });
-                        db.SaveChanges();
+                        await db.SaveChangesAsync();
 
-                        user = db.Users.Where(u => u.Email == model.Login && u.Password == model.Password).FirstOrDefault();
+                        user = await db.Users.Where(u => u.Email == model.Login && u.Password == model.Password).FirstOrDefaultAsync();
                     }
                     // если пользователь удачно добавлен в бд
                     if (user != null)

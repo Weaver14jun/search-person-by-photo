@@ -3,6 +3,7 @@
     ViewBag.Title = "Insert";
 }
 
+<p>id=@ViewBag.UserId</p>
 <h2>Drag & Drop file upload </h2>
 <div id="dropArea">
     Drop your files here
@@ -33,7 +34,7 @@
     <script type="text/javascript">
         $(function () {
             $('#dropArea').filedrop({
-                url: '@Url.Action("UploadFiles")',
+                url: '@Url.Action("UploadFiles", new { userId = ViewBag.UserId })',
                 allowedfiletypes: ['image/jpeg', 'image/png', 'image/gif'],
                 allowedfileextensions: ['.jpg', '.jpeg', '.png', '.gif'],
                 paramname: 'files',

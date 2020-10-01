@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Web_service.Models;
@@ -10,12 +12,12 @@ namespace Web_service.Controllers
     public class UsersController : Controller
     {
         // GET: Users
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             User user = null;
             using (UserContext db = new UserContext())
             {
-                user = db.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+                user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
                 //For users table
                 if (user.IsAdmin == 1)
                 {
@@ -25,46 +27,9 @@ namespace Web_service.Controllers
                 {
                     ViewBag.userList = null;
                 }
-                //
-            }
-
-            List<Tasks> tasks = new List<Tasks>();
-            using (TasksContext db = new TasksContext())
-            {
-                var query = db.Tasks.Where(u => u.IdUser == user.Id).ToList();
-                foreach (var item in query)
-                {
-                    if (item.Name.Length > 30)
-                    {
-                        string str = "";
-                        string str1 = item.Name;
-                        while (str1.Length > 30)
-                        {
-                            str += str1.Substring(0, 30) + " ";
-                            str1 = str1.Remove(0, 30);
-                        }
-                        str += str1;
-                        item.Name = str;
-                    }
-                    if (item.Description.Length > 30)
-                    {
-                        string str = "";
-                        string str1 = item.Description;
-                        while (str1.Length > 30)
-                        {
-                            str += str1.Substring(0, 30) + " ";
-                            str1 = str1.Remove(0, 30);
-                        }
-                        str += str1;
-                        item.Description = str;
-                    }
-                    tasks.Add(item as Tasks);
-                }
             }
 
             ViewBag.User = user;
-            ViewBag.Tasks = tasks;
-
 
             if (Request.IsAjaxRequest())
             {
@@ -73,12 +38,12 @@ namespace Web_service.Controllers
             return View();
         }
 
-        public ActionResult AjaxDelete()
+        public async Task<ActionResult> AjaxDelete()
         {
             User user = null;
             using (UserContext db = new UserContext())
             {
-                user = db.Users.First(u => u.Email == User.Identity.Name);
+                user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
                 if (user.IsAdmin != 1)
                 {
                     return null;
@@ -89,54 +54,19 @@ namespace Web_service.Controllers
 
             using (UserContext db = new UserContext())
             {
-                var delete = db.Users.Where(u => u.Id == id).ToList();
+                var delete = await db.Users.Where(u => u.Id == id).ToListAsync();
                 foreach (var item in delete)
                 {
                     db.Users.Remove(item);
                 }
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
             if (Request.IsAjaxRequest())
             {
-
-                //List<Tasks> tasks = new List<Tasks>();
-                //using (UserContext db = new UserContext())
-                //{
-                //    var query = user.;//db.Users.Where(u => u.Id == user.Id).ToList();
-                //    foreach (var item in query)
-                //    {
-                //        if (item.Name.Length > 30)
-                //        {
-                //            string str = "";
-                //            string str1 = item.Name;
-                //            while (str1.Length > 30)
-                //            {
-                //                str += str1.Substring(0, 30) + " ";
-                //                str1 = str1.Remove(0, 30);
-                //            }
-                //            str += str1;
-                //            item.Name = str;
-                //        }
-                //        if (item.Description.Length > 30)
-                //        {
-                //            string str = "";
-                //            string str1 = item.Description;
-                //            while (str1.Length > 30)
-                //            {
-                //                str += str1.Substring(0, 30) + " ";
-                //                str1 = str1.Remove(0, 30);
-                //            }
-                //            str += str1;
-                //            item.Description = str;
-                //        }
-                //        tasks.Add(item as Tasks);
-                //    }
-                //}
-
                 List<User> userList = new List<User>();
                 using (UserContext db = new UserContext())
                 {
-                    userList = db.Users.ToList();
+                    userList = await db.Users.ToListAsync();
                 }
 
                 ViewBag.userList = userList;
@@ -148,12 +78,12 @@ namespace Web_service.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult AjaxGetUsers()
+        public async Task<ActionResult> AjaxGetUsers()
         {
             List<User> userList = new List<User>();
             using (UserContext db = new UserContext())
             {
-                userList = db.Users.ToList();
+                userList = await db.Users.ToListAsync();
             }
 
             ViewBag.userList = userList;
@@ -162,6 +92,45 @@ namespace Web_service.Controllers
                 return PartialView("userList");
             }
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Change(int id)
+        {
+            User user = null;
+            using (UserContext db = new UserContext())
+            {
+                user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            }
+
+            ViewBag.UserData = user;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Change(int id, RegisterModel registerModel)
+        {
+            User user = null;
+            using (UserContext db = new UserContext())
+            {
+                user = await db.Users.FirstAsync(u => u.Id == id);
+                user.FIO = registerModel.FIO;
+                user.Age = registerModel.Age;
+                user.Email = registerModel.Login;
+                user.Password = registerModel.Password;
+                db.SaveChanges();
+
+                user = await db.Users.FirstAsync(u => u.Email == User.Identity.Name);
+            }
+
+            if (user.Id != id)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
         }
     }
 }

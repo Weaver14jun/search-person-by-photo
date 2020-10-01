@@ -131,18 +131,23 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PhotosController.cs" />
-    <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202010011229465_InitialCreate.cs" />
+    <Compile Include="Migrations\202010011229465_InitialCreate.designer.cs">
+      <DependentUpon>202010011229465_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202010011341398_InitialCreatePhotos.cs" />
+    <Compile Include="Migrations\202010011341398_InitialCreatePhotos.designer.cs">
+      <DependentUpon>202010011341398_InitialCreatePhotos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\ConfigurationPhotos.cs" />
+    <Compile Include="Migrations\ConfigurationUser.cs" />
     <Compile Include="Models\Photos.cs" />
-    <Compile Include="Models\Comment.cs" />
-    <Compile Include="Models\CommentContext.cs" />
     <Compile Include="Models\Models.cs" />
     <Compile Include="Models\PhotosContext.cs" />
-    <Compile Include="Models\Tasks.cs" />
-    <Compile Include="Models\TasksContext.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -188,19 +193,14 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Home\Change.cshtml" />
-    <Content Include="Views\Home\Insert.cshtml" />
-    <Content Include="Views\Home\AjaxFind.cshtml" />
-    <Content Include="Views\Home\AjaxInsertComment.cshtml" />
-    <Content Include="Views\Home\AjaxChangeComment.cshtml" />
     <Content Include="Views\Photos\Insert.cshtml" />
     <Content Include="Views\Photos\UserPhotos.cshtml" />
     <Content Include="Views\Photos\Search.cshtml" />
+    <Content Include="Views\Users\Change.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Tasks\" />
-    <Folder Include="Views\Users\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -214,6 +214,14 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202010011229465_InitialCreate.resx">
+      <DependentUpon>202010011229465_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010011341398_InitialCreatePhotos.resx">
+      <DependentUpon>202010011341398_InitialCreatePhotos.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

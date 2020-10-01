@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,19 +13,30 @@ namespace Web_service.Controllers
 {
     public class PhotosController : Controller
     {
-        public ActionResult UserPhotos()
+
+        public async Task<ActionResult> UserPhotos(int? id)
         {
             User user = null;
-            using (UserContext db = new UserContext())
+            if (id == null)
             {
-                user = db.Users.First(u => u.Email == User.Identity.Name);
+                using (UserContext db = new UserContext())
+                {
+                    user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+                }
+            }
+            else
+            {
+                using (UserContext db = new UserContext())
+                {
+                    user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+                }
             }
             List<Photos> photos = new List<Photos>();
             using (PhotosContext db = new PhotosContext())
             {
-                foreach(var item in db.Photos.ToList())
+                foreach (var item in await db.Photos.ToListAsync())
                 {
-                    if(item.IdUser == user.Id)
+                    if (item.IdUser == user.Id)
                     {
                         photos.Add(item);
                     }
@@ -34,37 +47,28 @@ namespace Web_service.Controllers
             return View();
         }
 
-        public ActionResult Insert()
+        public ActionResult Insert(int? id)
         {
+            ViewData.Model = id;
+            ViewBag.UserId = id;
             return View();
         }
 
-        //[HttpPost]
-        //public ActionResult Insert(string fileName, byte[] imageData)
-        //{
-        //    User user = null;
-        //    using (UserContext db = new UserContext())
-        //    {
-        //        user = db.Users.First(u => u.Email == User.Identity.Name);
-        //    }
-
-        //    using (PhotosContext db = new PhotosContext())
-        //    {
-        //        db.Photos.Add(new Photos { IdUser = user.Id, FileName = fileName, ImageData = imageData });
-        //        db.SaveChanges();
-        //    }
-
-        //    return RedirectToAction("Index", "Home");
-        //    //return "";
-        //}
-
         [HttpPost]
-        public ActionResult UploadFiles(IEnumerable<HttpPostedFileBase> files)
+        public async Task<ActionResult> UploadFiles(IEnumerable<HttpPostedFileBase> files, int? userId)
         {
             User user = null;
             using (UserContext db = new UserContext())
             {
-                user = db.Users.First(u => u.Email == User.Identity.Name);
+                if (userId == null)
+                {
+                    user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+                }
+                else
+                {
+                    int? id = userId;
+                    user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+                }
             }
             foreach (var file in files)
             {
@@ -82,7 +86,7 @@ namespace Web_service.Controllers
                 using (PhotosContext db = new PhotosContext())
                 {
                     db.Photos.Add(new Photos { FileName = photo.FileName, IdUser = photo.IdUser, ImageData = photo.ImageData });
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
                 }
 
                 //file.SaveAs(Path.Combine(Server.MapPath("~/UploadedFiles"), filePath));
@@ -98,12 +102,12 @@ namespace Web_service.Controllers
         }
 
         [HttpPost]
-        public JsonResult Search(HttpPostedFileBase file)
+        public async Task<JsonResult> Search(HttpPostedFileBase file)
         {
             User user = null;
             using (UserContext db = new UserContext())
             {
-                user = db.Users.First(u => u.Email == User.Identity.Name);
+                user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             }
             var photo = new Photos();
             //byte[] imageData = null;
@@ -118,7 +122,7 @@ namespace Web_service.Controllers
 
             using (UserContext db = new UserContext())
             {
-                user = db.Users.First(u => u.Email == User.Identity.Name);
+                user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             }
             Photos findedPhoto = new Photos();
             using (PhotosContext db = new PhotosContext())
@@ -130,82 +134,44 @@ namespace Web_service.Controllers
                 return Json("No such user", JsonRequestBehavior.AllowGet);
             }
             User findedUser = null;
-            if(findedPhoto != null)
+            if (findedPhoto != null)
             {
                 using (UserContext db = new UserContext())
                 {
-                    findedUser = db.Users.First(u => u.Id == findedPhoto.IdUser);
+                    findedUser = db.Users.FirstOrDefault(u => u.Id == findedPhoto.IdUser);
                 }
                 //ViewBag.FindedUserFIO = findedUser.FIO;
-               
+
             }
-            if(findedPhoto == null)
+            if (findedPhoto == null || findedUser == null)
             {
                 return Json("No such user", JsonRequestBehavior.AllowGet);
             }
-            //ViewData["FIO"] = findedUser.FIO;
-            //ModelState.AddModelError("", findedUser.FIO);
-            //return RedirectToAction("Search", "Photos");
+
             return Json(findedUser.FIO, JsonRequestBehavior.AllowGet);
-            //return View(new { Value = findedUser.FIO });
-            //return Content("<p>"+findedUser.FIO+"</p>");
 
         }
 
-        public ActionResult AjaxDelete()
+        public async Task<ActionResult> AjaxDelete()
         {
             var id = Convert.ToInt32(Request["data"]);
 
             using (PhotosContext db = new PhotosContext())
             {
-                var delete = db.Photos.Where(u => u.Id == id).ToList();
+                var delete = await db.Photos.Where(u => u.Id == id).ToListAsync();
                 foreach (var item in delete)
                 {
                     db.Photos.Remove(item);
                 }
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
             if (Request.IsAjaxRequest())
             {
                 User user = null;
                 using (UserContext db = new UserContext())
                 {
-                    user = db.Users.First(u => u.FIO == User.Identity.Name);
+                    user = await db.Users.FirstOrDefaultAsync(u => u.FIO == User.Identity.Name);
                 }
-
-                //List<Tasks> tasks = new List<Tasks>();
-                //using (TasksContext db = new TasksContext())
-                //{
-                //    var query = db.Tasks.Where(u => u.IdUser == user.Id).ToList();
-                //    foreach (var item in query)
-                //    {
-                //        if (item.Name.Length > 30)
-                //        {
-                //            string str = "";
-                //            string str1 = item.Name;
-                //            while (str1.Length > 30)
-                //            {
-                //                str += str1.Substring(0, 30) + " ";
-                //                str1 = str1.Remove(0, 30);
-                //            }
-                //            str += str1;
-                //            item.Name = str;
-                //        }
-                //        if (item.Description.Length > 30)
-                //        {
-                //            string str = "";
-                //            string str1 = item.Description;
-                //            while (str1.Length > 30)
-                //            {
-                //                str += str1.Substring(0, 30) + " ";
-                //                str1 = str1.Remove(0, 30);
-                //            }
-                //            str += str1;
-                //            item.Description = str;
-                //        }
-                //        tasks.Add(item as Tasks);
-                //    }
-                //}
 
                 ViewBag.User = user;
                 //ViewBag.Tasks = tasks;
