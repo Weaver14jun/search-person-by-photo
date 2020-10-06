@@ -135,21 +135,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202010011229465_InitialCreate.cs" />
-    <Compile Include="Migrations\202010011229465_InitialCreate.designer.cs">
-      <DependentUpon>202010011229465_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202010061535544_InitialCreate.cs" />
+    <Compile Include="Migrations\202010061535544_InitialCreate.designer.cs">
+      <DependentUpon>202010061535544_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202010011341398_InitialCreatePhotos.cs" />
-    <Compile Include="Migrations\202010011341398_InitialCreatePhotos.designer.cs">
-      <DependentUpon>202010011341398_InitialCreatePhotos.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\ConfigurationPhotos.cs" />
-    <Compile Include="Migrations\ConfigurationUser.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ApplicationContext.cs" />
     <Compile Include="Models\Photos.cs" />
     <Compile Include="Models\Models.cs" />
-    <Compile Include="Models\PhotosContext.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\UserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -217,11 +211,8 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202010011229465_InitialCreate.resx">
-      <DependentUpon>202010011229465_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010011341398_InitialCreatePhotos.resx">
-      <DependentUpon>202010011341398_InitialCreatePhotos.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202010061535544_InitialCreate.resx">
+      <DependentUpon>202010061535544_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -25,7 +25,7 @@ namespace Web_service.Controllers
             {
                 // поиск пользователя в бд
                 User user = null;
-                using (UserContext db = new UserContext())
+                using (ApplicationContext db = new ApplicationContext())
                 {
                     user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Login && u.Password == model.Password);
 
@@ -56,14 +56,14 @@ namespace Web_service.Controllers
             if (ModelState.IsValid)
             {
                 User user = null;
-                using (UserContext db = new UserContext())
+                using (ApplicationContext db = new ApplicationContext())
                 {
                     user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Login);
                 }
                 if (user == null)
                 {
                     // создаем нового пользователя
-                    using (UserContext db = new UserContext())
+                    using (ApplicationContext db = new ApplicationContext())
                     {
                         db.Users.Add(new User { Email = model.Login, FIO = model.FIO, Password = model.Password, Age = model.Age });
                         await db.SaveChangesAsync();

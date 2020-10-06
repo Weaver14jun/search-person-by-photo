@@ -16,7 +16,7 @@ namespace Web_service.Controllers
         public async Task<ActionResult> Index()
         {
             User user = null;
-            using (UserContext db = new UserContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
                 //For users table
@@ -44,7 +44,7 @@ namespace Web_service.Controllers
         public async Task<ActionResult> AjaxGetUsers()
         {
             List<User> userList = new List<User>();
-            using (UserContext db = new UserContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 userList = await db.Users.ToListAsync();
             }
@@ -65,7 +65,7 @@ namespace Web_service.Controllers
         public async Task<ActionResult> AjaxDelete()
         {
             User user = null;
-            using (UserContext db = new UserContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
                 if (user.IsAdmin != 1)
@@ -76,7 +76,7 @@ namespace Web_service.Controllers
 
             var id = Convert.ToInt32(Request["data"]);
 
-            using (UserContext db = new UserContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 var delete = await db.Users.Where(u => u.Id == id).ToListAsync();
                 foreach (var item in delete)
@@ -89,7 +89,7 @@ namespace Web_service.Controllers
             {
 
                 List<User> userList = new List<User>();
-                using (UserContext db = new UserContext())
+                using (ApplicationContext db = new ApplicationContext())
                 {
                     userList = await db.Users.ToListAsync();
                 }

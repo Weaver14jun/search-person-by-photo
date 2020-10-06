@@ -19,20 +19,20 @@ namespace Web_service.Controllers
             User user = null;
             if (id == null)
             {
-                using (UserContext db = new UserContext())
+                using (ApplicationContext db = new ApplicationContext())
                 {
                     user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
                 }
             }
             else
             {
-                using (UserContext db = new UserContext())
+                using (ApplicationContext db = new ApplicationContext())
                 {
                     user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
                 }
             }
             List<Photos> photos = new List<Photos>();
-            using (PhotosContext db = new PhotosContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 foreach (var item in await db.Photos.ToListAsync())
                 {
@@ -58,7 +58,7 @@ namespace Web_service.Controllers
         public async Task<ActionResult> UploadFiles(IEnumerable<HttpPostedFileBase> files, int? userId)
         {
             User user = null;
-            using (UserContext db = new UserContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 if (userId == null)
                 {
@@ -83,7 +83,7 @@ namespace Web_service.Controllers
                     photo.ImageData = binaryReader.ReadBytes(file.ContentLength);
                     //imageData = binaryReader.ReadBytes(file.ContentLength);
                 }
-                using (PhotosContext db = new PhotosContext())
+                using (ApplicationContext db = new ApplicationContext())
                 {
                     db.Photos.Add(new Photos { FileName = photo.FileName, IdUser = photo.IdUser, ImageData = photo.ImageData });
                     await db.SaveChangesAsync();
@@ -105,7 +105,7 @@ namespace Web_service.Controllers
         public async Task<JsonResult> Search(HttpPostedFileBase file)
         {
             User user = null;
-            using (UserContext db = new UserContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             }
@@ -120,12 +120,12 @@ namespace Web_service.Controllers
                 //imageData = binaryReader.ReadBytes(file.ContentLength);
             }
 
-            using (UserContext db = new UserContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             }
             Photos findedPhoto = new Photos();
-            using (PhotosContext db = new PhotosContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 findedPhoto = db.Photos.FirstOrDefault(p => p.ImageData == photo.ImageData);
             }
@@ -136,7 +136,7 @@ namespace Web_service.Controllers
             User findedUser = null;
             if (findedPhoto != null)
             {
-                using (UserContext db = new UserContext())
+                using (ApplicationContext db = new ApplicationContext())
                 {
                     findedUser = db.Users.FirstOrDefault(u => u.Id == findedPhoto.IdUser);
                 }
@@ -156,7 +156,7 @@ namespace Web_service.Controllers
         {
             var id = Convert.ToInt32(Request["data"]);
 
-            using (PhotosContext db = new PhotosContext())
+            using (ApplicationContext db = new ApplicationContext())
             {
                 var delete = await db.Photos.Where(u => u.Id == id).ToListAsync();
                 foreach (var item in delete)
@@ -168,7 +168,7 @@ namespace Web_service.Controllers
             if (Request.IsAjaxRequest())
             {
                 User user = null;
-                using (UserContext db = new UserContext())
+                using (ApplicationContext db = new ApplicationContext())
                 {
                     user = await db.Users.FirstOrDefaultAsync(u => u.FIO == User.Identity.Name);
                 }

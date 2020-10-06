@@ -8,6 +8,17 @@
         public override void Up()
         {
             CreateTable(
+                "dbo.Photos",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        FileName = c.String(),
+                        ImageData = c.Binary(),
+                        IdUser = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.Users",
                 c => new
                     {
@@ -19,18 +30,7 @@
                         IsAdmin = c.Int(),
                     })
                 .PrimaryKey(t => t.Id);
-
-            CreateTable(
-                "dbo.Photos",
-                c => new
-                {
-                    Id = c.Int(nullable: false, identity: true),
-                    FileName = c.String(),
-                    ImageData = c.Byte(),
-                    IdUser = c.Int(nullable: false),
-                })
-                .PrimaryKey(t => t.Id);
-
+            
         }
         
         public override void Down()
