@@ -12,7 +12,6 @@ namespace Web_service.Models
         base("DefaultConnection")
         { }
 
-        public DbSet<Photos> Photos { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<Order> Orders { get; set; }
     }
 }

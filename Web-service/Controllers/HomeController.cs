@@ -15,46 +15,19 @@ namespace Web_service.Controllers
     {
         public async Task<ActionResult> Index()
         {
-            User user = null;
+            Order order = null;
             using (ApplicationContext db = new ApplicationContext())
             {
-                user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-                //For users table
-                if (user.IsAdmin == 1)
-                {
-                    ViewBag.userList = await db.Users.ToListAsync();
-                }
-                else
-                {
-                    ViewBag.userList = null;
-                }
-                //
+                ViewBag.orderList = await db.Orders.ToListAsync();
             }
 
-            ViewBag.User = user;
-            //ViewBag.Tasks = tasks;
-            
+            ViewBag.Order = order;
+
             if (Request.IsAjaxRequest())
             {
                 return PartialView("Index");
             }
             return View();
-        }
-
-        public async Task<ActionResult> AjaxGetUsers()
-        {
-            List<User> userList = new List<User>();
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                userList = await db.Users.ToListAsync();
-            }
-
-            ViewBag.userList = userList;
-            if (Request.IsAjaxRequest())
-            {
-                return PartialView("userList");
-            }
-            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult Insert()
@@ -62,43 +35,66 @@ namespace Web_service.Controllers
             return View();
         }
 
-        public async Task<ActionResult> AjaxDelete()
+        public ActionResult Change()
         {
-            User user = null;
+            return View();
+        }
+
+        public async Task<ActionResult> AjaxFind()
+        {
+            DateTime startDate = DateTime.MinValue;
+            DateTime endDate = DateTime.MaxValue;
+            try
+            {
+                startDate = Convert.ToDateTime(Request["dateTimeStart"]);
+                endDate = Convert.ToDateTime(Request["dateTimeEnd"]);
+            }
+            catch { return new HttpStatusCodeResult(400); }
+
+            List<Order> orders = new List<Order>();
+
             using (ApplicationContext db = new ApplicationContext())
             {
-                user = await db.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-                if (user.IsAdmin != 1)
-                {
-                    return null;
-                }
+                orders = await db.Orders.Where(x => (x.Date >= startDate) && (x.Date <= endDate)).ToListAsync();
             }
 
+            if (Request.IsAjaxRequest())
+            {
+
+                ViewBag.orderList = orders;
+
+                return PartialView("Index");
+            }
+            return RedirectToAction("Index", "Home");
+
+        }
+
+        public async Task<ActionResult> AjaxDelete()
+        {
             var id = Convert.ToInt32(Request["data"]);
+
 
             using (ApplicationContext db = new ApplicationContext())
             {
-                var delete = await db.Users.Where(u => u.Id == id).ToListAsync();
+                var delete = await db.Orders.Where(u => u.Id == id).ToListAsync();
                 foreach (var item in delete)
                 {
-                    db.Users.Remove(item);
+                    db.Orders.Remove(item);
                 }
                 await db.SaveChangesAsync();
             }
             if (Request.IsAjaxRequest())
             {
 
-                List<User> userList = new List<User>();
+                List<Order> orderList = new List<Order>();
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    userList = await db.Users.ToListAsync();
+                    orderList = await db.Orders.ToListAsync();
                 }
 
-                ViewBag.userList = userList;
-                //ViewBag.Tasks = tasks;
+                ViewBag.orderList = orderList;
 
                 return PartialView("Index");
-                //return RedirectToAction("Index", "Home");
             }
             return RedirectToAction("Index", "Home");
         }

@@ -26,41 +26,44 @@
 @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.min.js")
 <body>
 
-    @*@using (Ajax.BeginForm("Index", "Users", new AjaxOptions { InsertionMode = InsertionMode.Replace }))
-        {*@
-    <div id="usersid">
-        <p><a href="/Photos/Insert">Добавить фото</a></p>
-        <p><a href="/Photos/Search">Поиск по фото</a></p>
+    <div id="orderid">
+        <p><a href="/Orders/Insert">Добавить заказ</a></p>
+        <div style="position:fixed; right:0;">
+            @using (Ajax.BeginForm("AjaxFind", "Home", new AjaxOptions { UpdateTargetId = "orderid" }))
+            {
+                <p>Дата заказа с</p>
+                <input type="date" name="dateTimeStart" value="Test" />
+                <p>Дата заказа по</p>
+                <input type="date" name="dateTimeEnd" />
+                <p></p>
+                <input type="submit" value="Найти" />
+            }
+            <p id="orderid"></p>
+        </div>
         <table>
 
-            @if (ViewBag.userList != null)
+            @if (ViewBag.orderList != null)
             {
                 <tr>
-                    <td><p>Логин </p></td>
-                    <td><p>ФИО </p></td>
-                    <td><p>Возраст</p></td>
-                    <td><p>Является ли администратором</p></td>
+                    <td><p>Id </p></td>
+                    <td><p>Сумма</p></td>
+                    <td><p>Дата</p></td>
                     <td></td>
                 </tr>
-                foreach (var user in ViewBag.userList)
+                foreach (var order in ViewBag.orderList)
                 {
 
-        <tr id="tableRecord">
-            <td><p>@user.Email </p></td>
-            <td><p>@user.FIO </p></td>
-            <td><p>@user.Age </p></td>
-            <td><p>@user.IsAdmin </p></td>
-            <td><p><a href="/Users/Change?id=@user.Id">Изменить</a></p></td>
-            <td><p><a href="/Photos/UserPhotos?id=@user.Id">Просмотреть фото</a></p></td>
-            <td><p><a href="/Photos/Insert?id=@user.Id">Добавить фото</a></p></td>
-            <td>
-                <p>
-
-
-                    @Ajax.ActionLink("Удалить", "AjaxDelete", "Home", new { data = @user.Id }, new AjaxOptions { UpdateTargetId = "usersid" })
-                <p id="container"></p>
-            </td>
-        </tr>
+                    <tr id="tableRecord">
+                        <td><p>@order.Id </p></td>
+                        <td><p>@order.Sum </p></td>
+                        <td><p>@order.Date </p></td>
+                        <td><p><a href="/Orders/Change?id=@order.Id">Изменить</a></p></td>
+                        <td>
+                            <p>
+                                @Ajax.ActionLink("Удалить", "AjaxDelete", "Home", new { data = order.Id }, new AjaxOptions { UpdateTargetId = "orderid" })
+                            <p id="container"></p>
+                        </td>
+                    </tr>
                 }
             }
         </table>
